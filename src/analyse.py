@@ -43,3 +43,41 @@ def evaluer(sig, nb_incidents=0):
         return "BLOQUANT"
 
     return sig.gravite
+
+
+from src.contrat import Diagnostic
+
+
+def diagnostiquer(sig, base, nb_incidents=0):
+    """Construit un diagnostic à partir d'un signal et des fiches."""
+    niveau = evaluer(sig, nb_incidents)
+    fiches = chercher_fiches(sig, base)
+
+    if fiches:
+        cause = " ; ".join(fiches)
+    else:
+        cause = "Cause inconnue : verification manuelle"
+
+    if sig.categorie == "FAILLE":
+        action = f"Corriger la dependance {sig.service}"
+    elif sig.categorie == "BUILD_ECHEC":
+        action = f"Rejouer le build {sig.service}"
+    elif niveau == "BLOQUANT":
+        action = f"Isoler le service {sig.service}"
+    else:
+        action = "Observer"
+
+    critique = action.startswith("Isoler")
+
+    diagnostic = Diagnostic(
+        sig.ref,
+        niveau,
+        cause,
+        action,
+        critique,
+        [sig.origine]
+    )
+
+    sig.etat = "EVALUE"
+
+    return diagnostic

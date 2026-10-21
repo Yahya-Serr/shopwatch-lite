@@ -68,6 +68,43 @@ class TestAnalyse(unittest.TestCase):
         self.assertEqual(evaluer(signal), "MINEUR")
 
 
+    def test_diagnostiquer_faille(self):
+        signal = sig(
+            categorie="FAILLE",
+            gravite="MAJEUR",
+            texte="faille detectee",
+            service="catalogue"
+        )
+
+        diagnostic = diagnostiquer(signal, {"faille": "Mettre a jour"})
+
+        self.assertEqual(diagnostic.niveau, "MAJEUR")
+        self.assertEqual(diagnostic.cause, "Mettre a jour")
+        self.assertEqual(diagnostic.action, "Corriger la dependance catalogue")
+        self.assertFalse(diagnostic.critique)
+        self.assertEqual(diagnostic.origines, ["PAIEMENT"])
+        self.assertEqual(signal.etat, "EVALUE")
+
+    def test_diagnostiquer_service_bloquant(self):
+        signal = sig(texte="probleme inconnu", service="paiement")
+
+        diagnostic = diagnostiquer(signal, {}, nb_incidents=4)
+
+        self.assertEqual(diagnostic.niveau, "BLOQUANT")
+        self.assertEqual(
+            diagnostic.cause,
+            "Cause inconnue : verification manuelle"
+        )
+        self.assertEqual(diagnostic.action, "Isoler le service paiement")
+        self.assertTrue(diagnostic.critique)
+
+    def test_diagnostiquer_build(self):
+        signal = sig(categorie="BUILD_ECHEC", service="catalogue")
+
+        diagnostic = diagnostiquer(signal, {})
+
+        self.assertEqual(diagnostic.action, "Rejouer le build catalogue")
+
 
 if __name__ == "__main__":
     unittest.main()

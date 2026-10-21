@@ -1,12 +1,23 @@
 
 import unittest
 
-from src.analyse import est_repete, compter_incidents
-from src.contrat import Signal
+from src.analyse import (
+    est_repete,
+    compter_incidents,
+    chercher_fiches,
+    evaluer,
+    diagnostiquer
+)
+
+from src.contrat import FICHES, Signal
 
 
-def sig(categorie="JOURNAL", gravite="MAJEUR",
-        texte="timeout passerelle apres 30s", service="paiement"):
+def sig(
+    categorie="JOURNAL",
+    gravite="MAJEUR",
+    texte="timeout passerelle apres 30s",
+    service="paiement"
+):
     return Signal(
         "SH-0001",
         "2026-11-27T17:00:00Z",
@@ -21,12 +32,14 @@ def sig(categorie="JOURNAL", gravite="MAJEUR",
 
 class TestAnalyse(unittest.TestCase):
 
+    # 1. Test de la detection des signaux repetes
     def test_repete(self):
         vus = set()
 
         self.assertFalse(est_repete(sig(), vus))
         self.assertTrue(est_repete(sig(), vus))
 
+    # 2. Tests du comptage des incidents
     def test_compter_incidents(self):
         compteur = {}
 
@@ -41,7 +54,13 @@ class TestAnalyse(unittest.TestCase):
         self.assertEqual(compter_incidents(signal, compteur), 0)
         self.assertEqual(compteur, {})
 
+    def test_compter_incidents_bloquant(self):
+        compteur = {}
+        signal = sig(categorie="JOURNAL", gravite="BLOQUANT")
 
+        self.assertEqual(compter_incidents(signal, compteur), 1)
+
+    # 3. Tests de la recherche de fiches
     def test_chercher_fiches(self):
         signal = sig(texte="Timeout pendant le BUILD")
         base = {
@@ -55,7 +74,12 @@ class TestAnalyse(unittest.TestCase):
             ["Conseil timeout", "Conseil build"]
         )
 
+    def test_chercher_fiches_aucune_correspondance(self):
+        signal = sig(texte="probleme inconnu")
 
+        self.assertEqual(chercher_fiches(signal, {}), [])
+
+    # 4. Tests de l'evaluation de gravite
     def test_evaluer_panne_en_boucle(self):
         signal = sig()
 
@@ -67,7 +91,7 @@ class TestAnalyse(unittest.TestCase):
 
         self.assertEqual(evaluer(signal), "MINEUR")
 
-
+    # 5. Tests de la generation de diagnostic
     def test_diagnostiquer_faille(self):
         signal = sig(
             categorie="FAILLE",
@@ -76,11 +100,17 @@ class TestAnalyse(unittest.TestCase):
             service="catalogue"
         )
 
-        diagnostic = diagnostiquer(signal, {"faille": "Mettre a jour"})
+        diagnostic = diagnostiquer(
+            signal,
+            {"faille": "Mettre a jour"}
+        )
 
         self.assertEqual(diagnostic.niveau, "MAJEUR")
         self.assertEqual(diagnostic.cause, "Mettre a jour")
-        self.assertEqual(diagnostic.action, "Corriger la dependance catalogue")
+        self.assertEqual(
+            diagnostic.action,
+            "Corriger la dependance catalogue"
+        )
         self.assertFalse(diagnostic.critique)
         self.assertEqual(diagnostic.origines, ["PAIEMENT"])
         self.assertEqual(signal.etat, "EVALUE")
@@ -95,15 +125,33 @@ class TestAnalyse(unittest.TestCase):
             diagnostic.cause,
             "Cause inconnue : verification manuelle"
         )
-        self.assertEqual(diagnostic.action, "Isoler le service paiement")
+        self.assertEqual(
+            diagnostic.action,
+            "Isoler le service paiement"
+        )
         self.assertTrue(diagnostic.critique)
 
     def test_diagnostiquer_build(self):
-        signal = sig(categorie="BUILD_ECHEC", service="catalogue")
+        signal = sig(
+            categorie="BUILD_ECHEC",
+            service="catalogue"
+        )
 
         diagnostic = diagnostiquer(signal, {})
 
-        self.assertEqual(diagnostic.action, "Rejouer le build catalogue")
+        self.assertEqual(
+            diagnostic.action,
+            "Rejouer le build catalogue"
+        )
+        self.assertFalse(diagnostic.critique)
+
+    def test_diagnostiquer_journal_non_bloquant(self):
+        signal = sig(texte="aucun mot cle correspondant")
+
+        diagnostic = diagnostiquer(signal, {})
+
+        self.assertEqual(diagnostic.action, "Observer")
+        self.assertFalse(diagnostic.critique)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,7 @@
 
+from src.contrat import Diagnostic
+
+
 def est_repete(sig, vus):
     """Retourne True si le signal a déjà été vu, sinon l'ajoute à vus."""
     cle = (
@@ -43,9 +46,6 @@ def evaluer(sig, nb_incidents=0):
         return "BLOQUANT"
 
     return sig.gravite
-
-
-from src.contrat import Diagnostic
 
 
 def diagnostiquer(sig, base, nb_incidents=0):

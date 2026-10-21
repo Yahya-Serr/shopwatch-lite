@@ -2,12 +2,11 @@ import re
 from src.contrat import Signal
 
 def masquer_donnees(texte: str) -> str:
-    # Masquage des clés spécifiques (insensible à la casse) : password, pwd, token, secret, card, iban[cite: 3]
-    # Format nom=valeur ou nom: valeur jusqu'au séparateur d'arrêt[cite: 3]
+    # Masquage des clés spécifiques (insensible à la casse) : password, pwd, token, secret, card, iban
     pattern_cles = r'(?i)\b(password|pwd|token|secret|card|iban)([:=])\s*([^&\s,;]+)'
     texte_masque = re.sub(pattern_cles, r'\1\2[MASQUE]', texte)
     
-    # Masquage spécifique du jeton Bearer (hotfix de l'exercice 5)[cite: 15]
+    # Masquage spécifique du jeton Bearer (hotfix de l'exercice 5)
     pattern_bearer = r'(?i)\b(Bearer)\s+([^&\s,;]+)'
     texte_masque = re.sub(pattern_bearer, r'\1 [MASQUE]', texte_masque)
     

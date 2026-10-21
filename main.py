@@ -33,12 +33,11 @@ def afficher(resultat, carnet):
         consigner(diag, accord, "astreinte-shop", carnet, instant)
         print("Decision:", "AUTORISEE" if accord else "REFUSEE",
               "(simulation rien n'est execute)")
-    print()
+        print()
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
     vus, compteur, registre, carnet = set(), {}, [], []
-    
     entrees = [(traiter_journal, x) for x in JOURNAL]
     entrees += [(traiter_build, x) for x in RAPPORTS_BUILD]
     entrees += [(traiter_scan, x) for x in RAPPORTS_SCAN]

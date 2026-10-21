@@ -1,0 +1,36 @@
+
+# Python : fichiers generes
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environnements virtuels
+.venv/
+venv/
+env/
+
+# Outils de test et couverture
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Configuration des editeurs
+.vscode/
+.idea/
+
+# Systeme d'exploitation
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Variables d'environnement et secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# Fichiers temporaires
+*.tmp
+*.bak

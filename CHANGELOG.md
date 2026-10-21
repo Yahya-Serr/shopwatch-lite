@@ -2,6 +2,8 @@
   
 ## [Non publie] 
 
+## [1.0.0] - 2026-11-27
+
 - Agent Notification : composition, canal, diffusion et consignation (C)
 - Agent Analyse : detection des signaux repetes, comptage des incidents, recherche de fiches et generation des diagnostics.
 

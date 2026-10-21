@@ -23,3 +23,15 @@ def compter_incidents(sig, compteur):
         return compteur[sig.service]
 
     return 0
+
+
+def chercher_fiches(sig, base):
+    """Retourne les conseils dont le mot-clé apparaît dans le texte."""
+    texte = sig.texte.lower()
+    resultats = []
+
+    for mot_cle, conseil in base.items():
+        if mot_cle.lower() in texte:
+            resultats.append(conseil)
+
+    return resultats

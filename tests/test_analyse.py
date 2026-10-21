@@ -42,5 +42,20 @@ class TestAnalyse(unittest.TestCase):
         self.assertEqual(compteur, {})
 
 
+    def test_chercher_fiches(self):
+        signal = sig(texte="Timeout pendant le BUILD")
+        base = {
+            "timeout": "Conseil timeout",
+            "build": "Conseil build",
+            "faille": "Conseil faille"
+        }
+
+        self.assertEqual(
+            chercher_fiches(signal, base),
+            ["Conseil timeout", "Conseil build"]
+        )
+
+
+
 if __name__ == "__main__":
     unittest.main()

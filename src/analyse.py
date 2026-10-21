@@ -14,3 +14,12 @@ def est_repete(sig, vus):
 
     vus.add(cle)
     return False
+
+
+def compter_incidents(sig, compteur):
+    """Compte les incidents JOURNAL de gravité MAJEUR ou BLOQUANT."""
+    if sig.categorie == "JOURNAL" and sig.gravite in ("MAJEUR", "BLOQUANT"):
+        compteur[sig.service] = compteur.get(sig.service, 0) + 1
+        return compteur[sig.service]
+
+    return 0

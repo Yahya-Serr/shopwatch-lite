@@ -1,1 +1,9 @@
-# ShopWatch-Lite
+# shopwatch-lite
+
+Groupe : MYY 
+  
+Mini-plateforme de supervision d'une boutique en ligne : trois agents 
+(Extraction, Analyse, Notification) qui echangent via un contrat commun 
+(src/contrat.py). 
+  
+## Equipe 

@@ -11,3 +11,8 @@ raise NotImplementedError
 
 def approuver(diag: Diagnostic, reponse: str) -> bool:
 raise NotImplementedError
+
+def consigner(diag: Diagnostic, accord: bool, responsable: str,
+carnet: list, instant: str) -> dict:
+
+    raise NotImplementedError

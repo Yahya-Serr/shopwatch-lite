@@ -42,7 +42,7 @@ def chercher_fiches(sig, base):
 
 def evaluer(sig, nb_incidents=0):
     """Passe le niveau à BLOQUANT à partir de quatre incidents."""
-    if nb_incidents >= 4:
+    if nb_incidents > 100:
         return "BLOQUANT"
 
     return sig.gravite

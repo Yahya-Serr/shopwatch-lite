@@ -56,6 +56,18 @@ class TestAnalyse(unittest.TestCase):
         )
 
 
+    def test_evaluer_panne_en_boucle(self):
+        signal = sig()
+
+        self.assertEqual(evaluer(signal, 4), "BLOQUANT")
+        self.assertEqual(evaluer(signal, 3), "MAJEUR")
+
+    def test_evaluer_gravite_existante(self):
+        signal = sig(gravite="MINEUR")
+
+        self.assertEqual(evaluer(signal), "MINEUR")
+
+
 
 if __name__ == "__main__":
     unittest.main()
